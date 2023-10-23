@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="/include/header.html :: header"></div>
+</head>
+<body>
+<div th:replace="/include/nav.html :: nav"></div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-4">
+            <h1 class="mb-5">로그인</h1>
+            <form action="/auth/login" method="post">
+                <label for="username" class="form-label">아이디</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="ID">
+                </div>
+                <label for="password" class="form-label">비밀번호</label>
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
+
+                <div class="d-grid gap-2">
+                    <input type="submit" class="btn btn-outline-success" value="확인">
+                </div>
+            </form>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+<footer th:replace="/include/footer.html :: footer"></footer>
+<script th:if="${param.fail}">
+        alert("아이디 또는 비밀번호를 확인해주세요.");
+        location.href = "/auth/login";
+</script>
+</body>
+</html>

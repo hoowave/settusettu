@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="/include/header.html :: header"></div>
+    <link rel="stylesheet" href="/css/swiper-bundle.min.css">
+</head>
+<body>
+<div th:replace="/include/nav.html :: nav"></div>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-4">
+            <h1 class="mb-5">회원가입</h1>
+            <div class="swiper mySwiper mb-5" style="height: 600px">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide step1">
+
+                        <label for="email_01" class="form-label">이메일을 입력해주세요.</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="email_01" placeholder="email">
+                            <span class="input-group-text">@</span>
+                            <input type="text" class="form-control" id="email_02" placeholder="naver.com">
+                            <div class="invalid-feedback">
+                                사용할 수 없는 이메일입니다.
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-success" type="button" onclick="step1();">확인</button>
+                        </div>
+
+                    </div>
+                    <div class="swiper-slide step2">
+
+                        <label for="auth_code" class="form-label">이메일로 인증코드가 발송되었습니다.</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="auth_code" placeholder="인증코드 8자리">
+                            <div class="invalid-feedback">
+                                유효하지 않은 인증코드입니다.
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-success" type="button" onclick="step2();">확인</button>
+                        </div>
+
+                    </div>
+                    <div class="swiper-slide step3">
+
+                        <label for="email" class="form-label">이메일</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="email" id="email" disabled>
+                        </div>
+
+                        <label for="loginid" class="form-label">아이디</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="loginid" id="loginid"
+                                   placeholder="6~20 자리로 입력해주세요.">
+                            <div class="invalid-feedback">
+                                사용할 수 없는 아이디입니다.
+                            </div>
+                        </div>
+                        <label for="loginpw01" class="form-label">비밀번호</label>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control" id="loginpw01" placeholder="6~20 자리로 입력해주세요.">
+                            <div class="invalid-feedback">
+                                사용할 수 없는 비밀번호입니다.
+                            </div>
+                        </div>
+                        <label for="loginpw02" class="form-label">비밀번호확인</label>
+                        <div class="input-group mb-3">
+                            <input type="password" class="form-control" id="loginpw02" placeholder="6~20 자리로 입력해주세요.">
+                            <div class="invalid-feedback">
+                                비밀번호가 일치하지 않습니다.
+                            </div>
+                        </div>
+                        <label for="birth" class="form-label">생년월일</label>
+                        <div class="input-group mb-3">
+                            <input type="date" class="form-control" id="birth" name="birth">
+                            <div class="invalid-feedback">
+                                올바른 생년월일을 입력해주세요.
+                            </div>
+                        </div>
+                        <label for="gender_01" class="form-label">성별</label>
+                        <div class="input-group mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="gender" value="M" id="gender_01"
+                                       checked>
+                                <label class="form-check-label" for="gender_01">
+                                    남자
+                                </label>
+                            </div>
+                            <div class="form-check mx-3">
+                                <input class="form-check-input" type="radio" name="gender" value="F" id="gender_02">
+                                <label class="form-check-label" for="gender_02">
+                                    여자
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-success" type="button" onclick="step3();">확인</button>
+                        </div>
+
+                    </div>
+                    <div class="swiper-slide">
+
+                        <h3>짝짝짝!</h3>
+                        <p>회원가입이 완료되었어요.</p>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-outline-success" href="/auth/login" role="button">로그인 하러 가기</a>
+                            <a class="btn btn-outline-success" href="/" role="button">홈으로 가기</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+<footer th:replace="/include/footer.html :: footer"></footer>
+<script src="/js/swiper-bundle.min.js"></script>
+<script>
+    let swiper = new Swiper(".mySwiper", {
+        slidesPerView: "auto",
+        loop: false,
+        speed: 500,
+        allowTouchMove: false,
+    });
+
+    $(document).ready(function () {
+        $("#email_01").focus();
+
+        $('#loginid').focusout(function () {
+            idchk();
+        });
+
+        $('#loginpw01').focusout(function () {
+            pwchk1();
+        });
+
+        $('#loginpw02').focusout(function () {
+            pwchk2();
+        });
+
+        $('#birth').focusout(function () {
+            birthchk();
+        });
+
+    });
+
+    function step1() {
+        $.ajax({
+            url: "http://localhost:8080/auth/email",
+            type: "POST",
+            data: {
+                "email_01": $("#email_01").val(),
+                "email_02": $("#email_02").val(),
+            },
+            success: function (result) {
+                if (result == "success") {
+                    $("#email_01").removeClass("is-invalid");
+                    $("#email_02").removeClass("is-invalid");
+                    $(".step1 :input").prop('disabled', true);
+                    $(".step3 :input").prop('disabled', true);
+                    swiper.slideNext();
+                } else {
+                    $("#email_01").addClass("is-invalid");
+                    $("#email_02").addClass("is-invalid");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function step2() {
+        $("#loginid").focus();
+        $.ajax({
+            url: "http://localhost:8080/auth/email_auth",
+            type: "POST",
+            data: {
+                "email_01": $("#email_01").val(),
+                "email_02": $("#email_02").val(),
+                "code": $("#auth_code").val(),
+            },
+            success: function (result) {
+                if (result == "fail") {
+                    $("#auth_code").addClass("is-invalid");
+                } else {
+                    $("#auth_code").removeClass("is-invalid");
+                    $(".step2 :input").prop('disabled', true);
+                    $(".step3 :input").prop('disabled', false);
+                    $("#email").val(result);
+                    $("#email").prop('disabled', true);
+                    swiper.slideNext();
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+        $("#loginid").focus();
+    }
+
+    function idchk() {
+        $.ajax({
+            url: "http://localhost:8080/auth/idchk",
+            type: "POST",
+            data: {
+                "loginid": $("#loginid").val(),
+            },
+            success: function (result) {
+                if (result == "success") {
+                    $("#loginid").removeClass("is-invalid");
+                } else {
+                    $("#loginid").addClass("is-invalid");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function pwchk1() {
+        $.ajax({
+            url: "http://localhost:8080/auth/pwchk1",
+            type: "POST",
+            data: {
+                "loginpw01": $("#loginpw01").val(),
+            },
+            success: function (result) {
+                if (result == "success") {
+                    $("#loginpw01").removeClass("is-invalid");
+                } else {
+                    $("#loginpw01").addClass("is-invalid");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function pwchk2() {
+        $.ajax({
+            url: "http://localhost:8080/auth/pwchk2",
+            type: "POST",
+            data: {
+                "loginpw01": $("#loginpw01").val(),
+                "loginpw02": $("#loginpw02").val(),
+            },
+            success: function (result) {
+                if (result == "success") {
+                    $("#loginpw02").removeClass("is-invalid");
+                } else {
+                    $("#loginpw02").addClass("is-invalid");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function birthchk() {
+        $.ajax({
+            url: "http://localhost:8080/auth/birthchk",
+            type: "POST",
+            data: {
+                "birth": $("#birth").val(),
+            },
+            success: function (result) {
+                if (result == "success") {
+                    $("#birth").removeClass("is-invalid");
+                } else {
+                    $("#birth").addClass("is-invalid");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function step3() {
+        $.ajax({
+            url: "http://localhost:8080/auth/join",
+            type: "POST",
+            data: {
+                "loginId": $("#loginid").val(),
+                "loginPw": $("#loginpw01").val(),
+                "loginpw02": $("#loginpw02").val(),
+                "birth": $("#birth").val(),
+                "gender": $("input[name='gender']:checked").val(),
+                "email": $("#email").val(),
+            },
+            success: function (result) {
+                if (result == "success") {
+                    $(".step3 :input").prop('disabled', true);
+                    swiper.slideNext();
+                } else {
+                    return false;
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+</script>
+</body>
+</html>
